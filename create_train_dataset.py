@@ -17,11 +17,11 @@ class miss_dataset(Dataset):
 
     def __len__(self):
         return self.train_x.shape[0]
-    
+
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
             idx = idx.tolist()
-        
+
         return [self.train_x[idx] , self.train_y[idx]]
 
 def create_inout_sequences(input_x,freq,rec,tw):
@@ -30,7 +30,7 @@ def create_inout_sequences(input_x,freq,rec,tw):
     y = torch.zeros(L-tw,3)
 
     for i in range(L-tw):
-        x[i] = input_x[i:i+tw]  
+        x[i] = input_x[i:i+tw]
         y[i,0] = input_x[i+tw:i+tw+1,1]
         y[i,1] = freq[i+tw:i+tw+1]
         y[i,2] = rec[i+tw:i+tw+1]
@@ -41,7 +41,7 @@ def create_inout_sequences(input_x,freq,rec,tw):
 
 
 def get_miss_dataloader(batch_size,window_size,n_files):
-    PATH = "dataset/misses/train"
+    PATH = "dataset/misses"
     EXT = "*.csv"
     all_csv_files = [file
                     for path, subdir, files in os.walk(PATH)
@@ -93,7 +93,7 @@ def get_miss_dataloader(batch_size,window_size,n_files):
         if(count_files>n_files):
             break
 
-    
+
     dataset = miss_dataset(train_x.to(device),train_y.to(device))
     dataloader = DataLoader(dataset, batch_size=batch_size,
                             shuffle=True, num_workers=0,drop_last = True)
